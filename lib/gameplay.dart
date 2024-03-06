@@ -13,8 +13,10 @@ class GamePlayScreen extends StatefulWidget {
 class _GamePlayScreenState extends State<GamePlayScreen> {
   int rows = 12;
   int columns = 8;
-  int totalMines = 7;
+  int totalMines = 10;
   List<List<TypeSquare>> grid = [];
+  int flag = 10;
+  bool gameOver = false;
 
   @override
   void initState() {
@@ -74,6 +76,115 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
 
   bool _isValidTypeSquare(int row, int col) {
     return row >= 0 && row < rows && col >= 0 && col < columns;
+  }
+
+  void _handleTypeSquareTap(TypeSquare typesquare) {
+    if (gameOver || typesquare.isOpen || typesquare.isFlagged) return;
+
+    setState(() {
+      typesquare.isOpen = true;
+
+      if (typesquare.hasMine) {
+        gameOver = true;
+        for (final row in grid) {
+          for (final cell in row) {
+            if (cell.hasMine) {
+              cell.isOpen = true;
+            }
+          }
+        }
+        showSnackBar(context, message: "YOU sUCK");
+      } else if (_checkForWin()) {
+        gameOver = true;
+
+        for (final row in grid) {
+          for (final cell in row) {
+            cell.isOpen = true;
+          }
+        }
+        showSnackBar(context, message: "YOU sWIN");
+      } else if (typesquare.adjacentMines == 0) {
+        _openAdjacentCells(typesquare.row, typesquare.col);
+      }
+    });
+  }
+
+  bool _checkForWin() {
+    for (final row in grid) {
+      for (final cell in row) {
+        if (!cell.hasMine && !cell.isOpen) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  void _openAdjacentCells(int row, int col) {
+    for (final dir in direction) {
+      int newRow = row + dir.dy.toInt();
+      int newCol = col + dir.dx.toInt();
+
+      if (_isValidTypeSquare(newRow, newCol) &&
+          !grid[newRow][newCol].hasMine &&
+          !grid[newRow][newCol].isOpen) {
+        setState(() {
+          grid[newRow][newCol].isOpen = true;
+          if (grid[newRow][newCol].adjacentMines == 0) {
+            _openAdjacentCells(newRow, newCol);
+          }
+        });
+      }
+    }
+
+    if (gameOver) return;
+
+    if (_checkForWin()) {
+      gameOver = true;
+      for (final row in grid) {
+        for (final cell in row) {
+          if (cell.hasMine) {
+            cell.isOpen = true;
+          }
+        }
+      }
+    showSnackBar(context, message: "YOU sWIN");
+    }
+  }
+
+  void _handleTypeSquareLongPress(TypeSquare typesquare) {
+    if (typesquare.isOpen) return;
+    if (flag <= 0 && !typesquare.isFlagged) return;
+
+    setState(() {
+      typesquare.isFlagged = !typesquare.isFlagged;
+
+      if (typesquare.isFlagged) {
+        flag--;
+      } else {
+        flag++;
+      }
+    });
+  }
+
+  void _reset() {
+    setState(() {
+      grid = [];
+      gameOver = false;
+      flag = 10;
+    });
+
+    _initializeGrid();
+  }
+
+  void showSnackBar(BuildContext context, {required String message}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   @override
@@ -175,9 +286,9 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                                       "assets/images/flag.png",
                                       height: 25,
                                     ),
-                                    const Text(
-                                      "X14",
-                                      style: TextStyle(
+                                    Text(
+                                      "$flag",
+                                      style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 20,
                                           fontWeight: FontWeight.w700
@@ -213,6 +324,9 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                         final typesquare = grid[row][col];
 
                         return GestureDetector(
+                          onTap: () => _handleTypeSquareTap(typesquare),
+                          onLongPress: () =>
+                              _handleTypeSquareLongPress(typesquare),
                           child: Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),

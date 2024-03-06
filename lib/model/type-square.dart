@@ -12,7 +12,7 @@ class TypeSquare {
     required this.col,
     this.isFlagged = false,
     this.hasMine = false,
-    this.isOpen = true,
+    this.isOpen = false,
     this.adjacentMines = 0,
   });
 }
