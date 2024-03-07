@@ -287,7 +287,7 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                                       height: 25,
                                     ),
                                     Text(
-                                      "$flag",
+                                      "X$flag",
                                       style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 20,
@@ -327,43 +327,52 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                           onTap: () => _handleTypeSquareTap(typesquare),
                           onLongPress: () =>
                               _handleTypeSquareLongPress(typesquare),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(1),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: typesquare.isOpen
+                                    ? const DecorationImage(
+                                      image: AssetImage(
+                                        "assets/images/purple_saper.png"),
+                                        fit: BoxFit.cover
+                                      )
+                                    : typesquare.isFlagged
+                                    ? const DecorationImage(
+                                      image: AssetImage(
+                                        "assets/images/green_saper.png"),
+                                        fit: BoxFit.cover
+                                      )
+                                    : const DecorationImage(
+                                      image: AssetImage(
+                                        "assets/images/green_saper.png"),
+                                        fit: BoxFit.cover
+                                      ),
                                 color: typesquare.isOpen
-                                    ? Colors.white
+                                    ? Colors.purple
                                     : typesquare.isFlagged
-                                    ? Colors.deepPurple
-                                    : Colors.purple,
-                                boxShadow: const [
-                                  BoxShadow(
-                                      blurRadius: 4,
-                                      offset: Offset(-4, 4),
-                                      color: Colors.white
+                                    ? Colors.green
+                                    : Colors.green,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  typesquare.isOpen
+                                      ? typesquare.hasMine
+                                      ? '💣'
+                                      : typesquare.adjacentMines.toString()
+                                      : typesquare.isFlagged
+                                      ? '🏴'
+                                      : '',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: typesquare.isFlagged ? 24 : 18,
+                                    color: Colors.white
                                   ),
-                                  BoxShadow(
-                                      blurRadius: 4,
-                                      offset: Offset(4, 4),
-                                      color: Colors.lightBlue
-                                  ),
-                                ]
-                            ),
-                            child: Center(
-                              child: Text(
-                                typesquare.isOpen
-                                    ? typesquare.hasMine
-                                    ? '💣'
-                                    : typesquare.adjacentMines.toString()
-                                    : typesquare.isFlagged
-                                    ? '🏴'
-                                    : '',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: typesquare.isFlagged ? 24 : 18,
                                 ),
                               ),
                             ),
-                          ),
+                          )
                         );
                       },
                     ),
