@@ -388,15 +388,6 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
     _initializeGrid();
   }
 
-  void showSnackBar(BuildContext context, {required String message}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = MediaQuery.of(context);
@@ -412,7 +403,7 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
-                      height: theme.size.height / 5.5,
+                      height: theme.size.height / 4.5,
                       width: theme.size.width / 1.2,
                       decoration: const BoxDecoration(
                           image: DecorationImage(
