@@ -208,7 +208,7 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                       right: 10,
                       left: 10,
                       bottom: 40,
-                      child: Image.asset("assets/images/you-win.png"),
+                      child: Image.asset("assets/images/try-now.png"),
                     ),
                     Positioned(
                       top: 500,
@@ -251,7 +251,68 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
             cell.isOpen = true;
           }
         }
-        showSnackBar(context, message: "YOU sWIN");
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                  backgroundColor: Colors.transparent,
+                  content: Stack(
+                    children: [
+                      Positioned(
+                        top: 350,
+                        child:  Container(
+                          height: MediaQuery.of(context).size.height / 5,
+                          width: MediaQuery.of(context).size.width / 1,
+                          decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage(
+                                    "assets/images/fon-win.png",
+                                  ),
+                                  fit: BoxFit.fill
+                              )
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 10,
+                        right: 10,
+                        left: 10,
+                        bottom: 40,
+                        child: Image.asset("assets/images/you-win.png"),
+                      ),
+                      Positioned(
+                          top: 500,
+                          right: 10,
+                          left: 10,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              InkWell(
+                                child: Image.asset(
+                                  "assets/images/replay_button.png", height: 40,),
+                                onTap: () {
+                                  _reset();
+                                  resetTimer();
+                                  startTimer();
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              InkWell(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) =>
+                                  const MenuScreen()),),
+                                child: Image.asset(
+                                  "assets/images/menu_button.png", height: 40,),
+                              )
+                            ],
+                          )
+                      )
+                    ],
+                  )
+              );
+            }
+        );
       } else if (typesquare.adjacentMines == 0) {
         _openAdjacentCells(typesquare.row, typesquare.col);
       }
@@ -298,7 +359,7 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
           }
         }
       }
-      showSnackBar(context, message: "YOU sWIN");
+
     }
   }
 
