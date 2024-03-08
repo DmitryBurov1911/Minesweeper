@@ -423,6 +423,7 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                             bottom: 10
                         ),
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -461,7 +462,6 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                                 )
                               ],
                             ),
-                            const SizedBox(height: 10,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
