@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:saper/components/bg.dart';
+import 'package:saper/menu.dart';
 import 'package:saper/model/type-square.dart';
 
 class GamePlayScreen extends StatefulWidget {
@@ -20,13 +21,37 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
       minutes = 0,
       seconds = 0;
 
+
+  bool isTimerRunning = false;
+  late Timer _timer;
+
   void startTimer() {
-    Timer.periodic(
+    setState(() {
+      isTimerRunning = true;
+    });
+    _timer = Timer.periodic(
         const Duration(seconds: 1),
             (timer) {
           _startSecond();
         }
     );
+  }
+
+  void pauseTimer() {
+    _timer.cancel();
+    isTimerRunning = false;
+  }
+
+  void resetTimer () {
+    _timer.cancel();
+    setState(() {
+      seconds = 0;
+      minutes = 0;
+      hours = 0;
+      secondString = "00";
+      minuteString = "00";
+      hoursString = "00";
+    });
   }
 
   void _startSecond() {
@@ -155,8 +180,69 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
               cell.isOpen = true;
             }
           }
-        }
-        showSnackBar(context, message: "YOU sUCK");
+        } // lose
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                backgroundColor: Colors.transparent,
+                content: Stack(
+                  children: [
+                    Positioned(
+                      top: 350,
+                      child:  Container(
+                        height: MediaQuery.of(context).size.height / 5,
+                        width: MediaQuery.of(context).size.width / 1,
+                        decoration: const BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage(
+                                  "assets/images/fon-win.png",
+                                ),
+                                fit: BoxFit.fill
+                            )
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      left: 10,
+                      bottom: 40,
+                      child: Image.asset("assets/images/you-win.png"),
+                    ),
+                    Positioned(
+                      top: 500,
+                      right: 10,
+                      left: 10,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          InkWell(
+                            child: Image.asset(
+                              "assets/images/replay_button.png", height: 40,),
+                            onTap: () {
+                              _reset();
+                              resetTimer();
+                              startTimer();
+                              Navigator.pop(context);
+                            },
+                          ),
+                          InkWell(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) =>
+                              const MenuScreen()),),
+                            child: Image.asset(
+                              "assets/images/menu_button.png", height: 40,),
+                          )
+                        ],
+                      )
+                    )
+                  ],
+                )
+              );
+            }
+        );
       } else if (_checkForWin()) {
         gameOver = true;
 

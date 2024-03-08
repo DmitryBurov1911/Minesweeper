@@ -13,6 +13,11 @@ class MenuScreen extends StatelessWidget {
         alignment: AlignmentDirectional.center,
         children: [
           const MainScreen(backG: "assets/images/bg.png",),
+          Positioned(
+            right: 20,
+            top: 40,
+            child: Image.asset("assets/images/privacy.png", height: 40,),
+          ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
