@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:saper/components/bg.dart';
@@ -11,6 +12,67 @@ class GamePlayScreen extends StatefulWidget {
 }
 
 class _GamePlayScreenState extends State<GamePlayScreen> {
+  String hoursString = '00',
+      minuteString = '00',
+      secondString = '00';
+
+  int hours = 0,
+      minutes = 0,
+      seconds = 0;
+
+  void startTimer() {
+    Timer.periodic(
+        const Duration(seconds: 1),
+            (timer) {
+          _startSecond();
+        }
+    );
+  }
+
+  void _startSecond() {
+    setState(() {
+      if (seconds < 59) {
+        seconds++;
+        secondString = seconds.toString();
+        if (secondString.length == 1) {
+          secondString = "0" + secondString;
+        }
+      } else {
+        _startMinute();
+      }
+    });
+  }
+
+  void _startMinute() {
+    setState(() {
+      if (minutes < 59) {
+        seconds = 0;
+        secondString = "00";
+        minutes++;
+        minuteString = minutes.toString();
+        if (minuteString.length == 1) {
+          minuteString = "0" + minuteString;
+        }
+      } else {
+        _startHour();
+      }
+    });
+  }
+
+  void _startHour() {
+    setState(() {
+      seconds = 0;
+      minutes = 0;
+      secondString = "00";
+      minuteString = "00";
+      hours++;
+      hoursString = hours.toString();
+      if (hoursString.length == 1) {
+        hoursString = "0" + hoursString;
+      }
+    });
+  }
+
   int rows = 12;
   int columns = 8;
   int totalMines = 10;
@@ -22,6 +84,7 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
   void initState() {
     super.initState();
     _initializeGrid();
+    startTimer();
   }
 
   void _initializeGrid() {
@@ -149,7 +212,7 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
           }
         }
       }
-    showSnackBar(context, message: "YOU sWIN");
+      showSnackBar(context, message: "YOU sWIN");
     }
   }
 
@@ -250,9 +313,9 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                                     ),
                                   ],
                                 ),
-                                const Text(
-                                  "0:13.37",
-                                  style: TextStyle(
+                                Text(
+                                  "$hoursString:$minuteString:$secondString",
+                                  style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 20,
                                       fontWeight: FontWeight.w700
@@ -324,55 +387,55 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                         final typesquare = grid[row][col];
 
                         return GestureDetector(
-                          onTap: () => _handleTypeSquareTap(typesquare),
-                          onLongPress: () =>
-                              _handleTypeSquareLongPress(typesquare),
-                          child: Padding(
-                            padding: const EdgeInsets.all(1),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: typesquare.isOpen
-                                    ? const DecorationImage(
+                            onTap: () => _handleTypeSquareTap(typesquare),
+                            onLongPress: () =>
+                                _handleTypeSquareLongPress(typesquare),
+                            child: Padding(
+                              padding: const EdgeInsets.all(1),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: typesquare.isOpen
+                                      ? const DecorationImage(
                                       image: AssetImage(
-                                        "assets/images/purple_saper.png"),
-                                        fit: BoxFit.cover
-                                      )
-                                    : typesquare.isFlagged
-                                    ? const DecorationImage(
-                                      image: AssetImage(
-                                        "assets/images/green_saper.png"),
-                                        fit: BoxFit.cover
-                                      )
-                                    : const DecorationImage(
-                                      image: AssetImage(
-                                        "assets/images/green_saper.png"),
-                                        fit: BoxFit.cover
-                                      ),
-                                color: typesquare.isOpen
-                                    ? Colors.purple
-                                    : typesquare.isFlagged
-                                    ? Colors.green
-                                    : Colors.green,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  typesquare.isOpen
-                                      ? typesquare.hasMine
-                                      ? '💣'
-                                      : typesquare.adjacentMines.toString()
+                                          "assets/images/purple_saper.png"),
+                                      fit: BoxFit.cover
+                                  )
                                       : typesquare.isFlagged
-                                      ? '🏴'
-                                      : '',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: typesquare.isFlagged ? 24 : 18,
-                                    color: Colors.white
+                                      ? const DecorationImage(
+                                      image: AssetImage(
+                                          "assets/images/green_saper.png"),
+                                      fit: BoxFit.cover
+                                  )
+                                      : const DecorationImage(
+                                      image: AssetImage(
+                                          "assets/images/green_saper.png"),
+                                      fit: BoxFit.cover
+                                  ),
+                                  color: typesquare.isOpen
+                                      ? Colors.purple
+                                      : typesquare.isFlagged
+                                      ? Colors.green
+                                      : Colors.green,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    typesquare.isOpen
+                                        ? typesquare.hasMine
+                                        ? '💣'
+                                        : typesquare.adjacentMines.toString()
+                                        : typesquare.isFlagged
+                                        ? '🏴'
+                                        : '',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: typesquare.isFlagged ? 24 : 18,
+                                        color: Colors.white
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          )
+                            )
                         );
                       },
                     ),

@@ -192,6 +192,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.1"
+  timer_stop_watch:
+    dependency: "direct main"
+    description:
+      name: timer_stop_watch
+      sha256: "03e61ff595f8c12cd441355c255b58f13de562bacf8afa57980f2692fabc6f52"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   vector_math:
     dependency: transitive
     description:
@@ -210,3 +218,4 @@ packages:
     version: "13.0.0"
 sdks:
   dart: ">=3.3.0 <4.0.0"
+  flutter: ">=1.16.0"
